@@ -11,7 +11,7 @@ namespace ApiApplication.Database
         public static void Initialize(IApplicationBuilder app)
         {
             using var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            var context = serviceScope.ServiceProvider.GetService<CinemaContext>();
+            var context = serviceScope.ServiceProvider.GetService<CinemaDbContext>();
             context.Database.EnsureCreated();          
             
 
