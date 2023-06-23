@@ -4,9 +4,9 @@ using AutoMapper;
 
 namespace ApiApplication
 {
-    public class CinemaProfile : Profile
+    public class AutoMapperProfile : Profile
     {
-        public CinemaProfile()
+        public AutoMapperProfile()
         {
             CreateMap<ShowtimeEntity, Showtime>();
         }

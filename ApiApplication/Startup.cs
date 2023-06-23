@@ -38,7 +38,14 @@ namespace ApiApplication
             });
 
             services.AddAutoMapper(typeof(Startup));
-            services.AddControllers();
+            services
+                .AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.DictionaryKeyPolicy = new SnakeCaseNamingPolicy();
+                    options.JsonSerializerOptions.PropertyNamingPolicy = new SnakeCaseNamingPolicy();
+                });
+
             services.AddSwaggerDocument();
         }
 

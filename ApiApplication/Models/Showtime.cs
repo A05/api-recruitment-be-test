@@ -9,6 +9,6 @@ namespace ApiApplication.Models
         public DateTime EndDate { get; set; }
         public string Schedule { get; set; }
         public Movie Movie { get; set; }
-        public Auditorium Auditorium { get; set; }
+        public int AuditoriumId { get; set; }
     }
 }
