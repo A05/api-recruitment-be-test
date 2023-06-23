@@ -1,108 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using ApiApplication.Database;
 using ApiApplication.Models;
+using AutoMapper;
 
 namespace ApiApplication.Controllers
 {
-    [Route("api/showtimes")]
     [ApiController]
+    [Route("api/showtimes")]
     public class ShowtimeController : ControllerBase
     {
-        private readonly CinemaDbContext _context;
+        private readonly IShowtimesRepository _repository;
+        private readonly IMapper _mapper;
 
-        public ShowtimeController(CinemaDbContext context)
+        public ShowtimeController(IShowtimesRepository repository, IMapper mapper)
         {
-            _context = context;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        // GET: api/Showtime
         [HttpGet]
-        public ActionResult<IEnumerable<Showtime>> GetShowtime()
+        public ActionResult<IEnumerable<Showtime>> Get()
         {
-            return Ok(_context.Showtimes.ToList());
+            //var entities = _repository.GetCollection();
+            //var models = _mapper.Map<IEnumerable<ShowtimeEntity>, IEnumerable<Showtime>>(entities);
+
+            //return Ok(models);
+            return Ok(Enumerable.Empty<Showtime>());
         }
 
-        // GET: api/Showtime/5
-        [HttpGet("{id}")]
-        public ActionResult<Showtime> GetShowtime(int id)
+        [HttpGet("date/{date}")]
+        public ActionResult<IEnumerable<Showtime>> GetByDate(DateTime date)
         {
-            var showtime = _context.Showtimes.Find(id);
-
-            if (showtime == null)
-            {
-                return NotFound();
-            }
-
-            return null;// showtime;
+            return Ok(Enumerable.Empty<Showtime>());
         }
 
-        // PUT: api/Showtime/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutShowtime(int id, Showtime showtime)
+        [HttpGet("movie/{title}")]
+        public ActionResult<IEnumerable<Showtime>> GetByTitle(string title)
         {
-            if (id != showtime.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(showtime).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ShowtimeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(Enumerable.Empty<Showtime>());
         }
 
-        // POST: api/Showtime
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Showtime>> PostShowtime(Showtime showtime)
+        public ActionResult<Showtime> Create(Showtime showtime)
         {
-            //_context.Showtimes.Add(showtime);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetShowtime), new { id = showtime.Id }, showtime);
+            //return CreatedAtAction(nameof(GetShowtime), new { id = showtime.Id }, showtime);
+            throw new NotImplementedException();
         }
 
-        // DELETE: api/Showtime/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteShowtime(int id)
+        [HttpPut]
+        public IActionResult Update(Showtime showtime)
         {
-            //var showtime = await _context.Showtime.FindAsync(id);
-            //if (showtime == null)
-            //{
-            //    return NotFound();
-            //}
-
-            //_context.Showtime.Remove(showtime);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private bool ShowtimeExists(int id)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
         {
-            return true;// _context.Showtime.Any(e => e.Id == id);
+            return NoContent();
         }
     }
 }
