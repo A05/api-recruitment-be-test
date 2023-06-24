@@ -105,9 +105,9 @@ namespace ApiApplication.Services
 
         private MovieEntity GetMovieFromImdb(string imdbId)
         {
-            var movie = _imdbService.Find(imdbId);
+            var movie = _imdbService.Find(imdbId, out var description);
             if (movie == null)
-                throw new ApplicationException($"Failed to find the movie with IMDB ID {imdbId}.");
+                throw new ApplicationException(description);
 
             return movie;
         }

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Net.Http;
 
 namespace ApiApplication
 {
@@ -23,7 +24,15 @@ namespace ApiApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IImdbService, ImdbService>();
+            services.AddHttpClient();
+
+            services.AddTransient<IImdbService, ImdbService>(sp =>
+            {
+                var apiKey = Configuration["ImdbApiKey"];
+                var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                return new ImdbService(apiKey, httpClientFactory);
+            });
+
             services.AddTransient<ICinemaService, CinemaService>();
             services.AddTransient<IShowtimesRepository, ShowtimesRepository>();
 
@@ -43,6 +52,7 @@ namespace ApiApplication
             });
 
             services.AddAutoMapper(typeof(Startup));
+
             services
                 .AddControllers()
                 .AddJsonOptions(options =>
