@@ -5,6 +5,7 @@ using ApiApplication.Models;
 using AutoMapper;
 using ApiApplication.Services;
 using ApiApplication.Database.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace ApiApplication.Controllers
 {
@@ -67,7 +68,14 @@ namespace ApiApplication.Controllers
         public ActionResult<ShowtimeModel> Create(ShowtimeModel model)
         {
             var entity = _mapper.Map<ShowtimeEntity>(model);
-            var createdEntity = _service.Create(entity);
+
+            if (!_service.TryCreate(entity, out var createdEntity))
+            {
+                Response.Headers.Location = Url.Action(nameof(GetById), new { id = createdEntity.Id });
+                
+                return Conflict($"The movie with IMDB ID {model.Movie.ImdbId} already exists.");
+            }
+            
             var createdModel = _mapper.Map<ShowtimeModel>(createdEntity);
 
             return CreatedAtAction(nameof(GetById), new { createdModel.Id }, createdModel);

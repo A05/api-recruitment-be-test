@@ -14,7 +14,7 @@ namespace ApiApplication.Services
 
         ShowtimeEntity GetByTitle(string title);
 
-        ShowtimeEntity Create(ShowtimeEntity showtime);
+        bool TryCreate(ShowtimeEntity showtime, out ShowtimeEntity createdEntity);
 
         ShowtimeEntity Update(ShowtimeEntity showtime);
 

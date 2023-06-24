@@ -46,7 +46,7 @@ namespace ApiApplication.Services
             return entity;
         }
 
-        public ShowtimeEntity Create(ShowtimeEntity showtime)
+        public bool TryCreate(ShowtimeEntity showtime, out ShowtimeEntity createdEntity)
         {
             if (showtime == null)
                 throw new ArgumentNullException(nameof(showtime));
@@ -56,14 +56,21 @@ namespace ApiApplication.Services
 
             EnsureAuditoriumIdIsSupported(showtime.AuditoriumId);
 
+            var existingShowtime = _repository.GetByMovie(i => i.ImdbId == showtime.Movie.ImdbId);
+            if (existingShowtime != null)
+            {
+                createdEntity = existingShowtime;
+                return false;
+            }
+
             var movie = GetMovieFromImdb(showtime.Movie.ImdbId);
             Debug.Assert(movie != null);
 
             var toBeAddedEntity = showtime.Clone(movie);
 
-            var addedEntity = _repository.Add(toBeAddedEntity);
+            createdEntity = _repository.Add(toBeAddedEntity);
 
-            return addedEntity;
+            return true;
         }
 
         public ShowtimeEntity Update(ShowtimeEntity showtime)
