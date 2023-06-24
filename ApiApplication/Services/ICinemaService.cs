@@ -16,7 +16,7 @@ namespace ApiApplication.Services
 
         bool TryCreate(ShowtimeEntity showtime, out ShowtimeEntity createdEntity);
 
-        ShowtimeEntity Update(ShowtimeEntity showtime);
+        bool TryUpdate(ShowtimeEntity showtime, out ShowtimeEntity updatedEntity);
 
         void Delete(int id);
     }

@@ -73,7 +73,7 @@ namespace ApiApplication.Services
             return true;
         }
 
-        public ShowtimeEntity Update(ShowtimeEntity showtime)
+        public bool TryUpdate(ShowtimeEntity showtime, out ShowtimeEntity updatedEntity)
         {
             if (showtime == null)
                 throw new ArgumentNullException(nameof(showtime));
@@ -82,6 +82,13 @@ namespace ApiApplication.Services
                 throw new ArgumentException($"Movie IMDB ID must be specified.", nameof(showtime));
 
             EnsureAuditoriumIdIsSupported(showtime.AuditoriumId);
+
+            var existingShowtime = _repository.GetCollection(i => i.Id == showtime.Id).SingleOrDefault();
+            if (existingShowtime == null)
+            {
+                updatedEntity = null;
+                return false;
+            }
 
             ShowtimeEntity toBeUpdatedEntity;
 
@@ -95,9 +102,9 @@ namespace ApiApplication.Services
                 toBeUpdatedEntity = showtime.Clone(movie);
             }
 
-            var updatedEntity = _repository.Update(toBeUpdatedEntity);
+            updatedEntity = _repository.Update(toBeUpdatedEntity);
 
-            return updatedEntity;
+            return true;
         }
 
         public void Delete(int id)

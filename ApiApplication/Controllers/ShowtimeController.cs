@@ -5,7 +5,6 @@ using ApiApplication.Models;
 using AutoMapper;
 using ApiApplication.Services;
 using ApiApplication.Database.Entities;
-using Microsoft.AspNetCore.Http;
 
 namespace ApiApplication.Controllers
 {
@@ -82,15 +81,16 @@ namespace ApiApplication.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update(ShowtimeModel model)
+        public ActionResult<ShowtimeModel> Update(ShowtimeModel model)
         {
             var entity = _mapper.Map<ShowtimeEntity>(model);
-            var updatedEntity = _service.Update(entity);
+
+            if (!_service.TryUpdate(entity, out var updatedEntity))
+                return NotFound();
+            
             var updatedModel = _mapper.Map<ShowtimeModel>(updatedEntity);
 
-            // TODO: Return updatedModel. Figure out the proper HTTP status code.
-
-            return NoContent();
+            return Ok(updatedModel);
         }
 
         [HttpDelete("{id}")]
