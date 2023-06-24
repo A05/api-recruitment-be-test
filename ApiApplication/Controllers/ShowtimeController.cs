@@ -55,6 +55,9 @@ namespace ApiApplication.Controllers
         public ActionResult<ShowtimeModel> GetByTitle(string title)
         {
             var entity = _service.GetByTitle(title);
+            if (entity == null)
+                return NotFound();
+
             var model = _mapper.Map<ShowtimeModel>(entity);
 
             return Ok(model);
