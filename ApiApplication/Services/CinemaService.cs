@@ -107,15 +107,17 @@ namespace ApiApplication.Services
             return true;
         }
 
-        public void Delete(int id)
+        public bool TryDelete(int id)
         {
             try
             {
                 _repository.Delete(id);
+
+                return true;
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
-                throw new ApplicationException($"Failed to find the showtime with ID {id}.", ex);
+                return false;
             }
         }
 

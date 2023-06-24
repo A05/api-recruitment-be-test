@@ -18,6 +18,6 @@ namespace ApiApplication.Services
 
         bool TryUpdate(ShowtimeEntity showtime, out ShowtimeEntity updatedEntity);
 
-        void Delete(int id);
+        bool TryDelete(int id);
     }
 }

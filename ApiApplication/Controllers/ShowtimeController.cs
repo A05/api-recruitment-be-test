@@ -96,7 +96,8 @@ namespace ApiApplication.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _service.Delete(id);
+            if (!_service.TryDelete(id))
+                return NotFound();
 
             return NoContent();
         }
