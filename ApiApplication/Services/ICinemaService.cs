@@ -7,7 +7,9 @@ namespace ApiApplication.Services
     public interface ICinemaService
     {
         IEnumerable<ShowtimeEntity> Get();
-        
+
+        ShowtimeEntity GetById(int id);
+
         IEnumerable<ShowtimeEntity> GetByDate(DateTime date);
 
         ShowtimeEntity GetByTitle(string title);

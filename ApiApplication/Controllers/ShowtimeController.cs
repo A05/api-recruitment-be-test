@@ -30,6 +30,15 @@ namespace ApiApplication.Controllers
             return Ok(models);
         }
 
+        [HttpGet("{id}")]
+        public ActionResult<ShowtimeModel> GetById(int id)
+        {
+            var entity = _service.GetById(id);
+            var model = _mapper.Map<ShowtimeModel>(entity);
+
+            return Ok(model);
+        }
+
         [HttpGet("date/{date}")]
         public ActionResult<IEnumerable<ShowtimeModel>> GetByDate(DateTime date)
         {
@@ -55,7 +64,7 @@ namespace ApiApplication.Controllers
             var createdEntity = _service.Create(entity);
             var createdModel = _mapper.Map<ShowtimeModel>(createdEntity);
 
-            return CreatedAtAction(nameof(Create), null, createdModel);
+            return CreatedAtAction(nameof(GetById), new { createdModel.Id }, createdModel);
         }
 
         [HttpPut]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using ApiApplication.Database.Entities;
 using System.Diagnostics;
+using System.Linq;
 
 namespace ApiApplication.Services
 {
@@ -22,6 +23,13 @@ namespace ApiApplication.Services
             var entities = _repository.GetCollection();
 
             return entities;
+        }
+
+        public ShowtimeEntity GetById(int id)
+        {
+            var entity = _repository.GetCollection(i => i.Id == id).Single();
+
+            return entity;
         }
 
         public IEnumerable<ShowtimeEntity> GetByDate(DateTime date)
