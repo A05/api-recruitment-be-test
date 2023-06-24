@@ -93,6 +93,12 @@ namespace ApiApplication.Controllers
             return Ok(updatedModel);
         }
 
+        [HttpPatch]
+        public IActionResult Update()
+        {
+            return Problem();
+        }
+
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
