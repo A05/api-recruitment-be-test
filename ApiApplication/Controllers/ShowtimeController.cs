@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using ApiApplication.Database;
 using ApiApplication.Models;
 using AutoMapper;
+using ApiApplication.Services;
+using ApiApplication.Database.Entities;
 
 namespace ApiApplication.Controllers
 {
@@ -12,53 +12,66 @@ namespace ApiApplication.Controllers
     [Route("api/showtimes")]
     public class ShowtimeController : ControllerBase
     {
-        private readonly IShowtimesRepository _repository;
+        private readonly ICinemaService _service;
         private readonly IMapper _mapper;
 
-        public ShowtimeController(IShowtimesRepository repository, IMapper mapper)
+        public ShowtimeController(ICinemaService service, IMapper mapper)
         {
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Showtime>> Get()
+        public ActionResult<IEnumerable<ShowtimeModel>> Get()
         {
-            //var entities = _repository.GetCollection();
-            //var models = _mapper.Map<IEnumerable<ShowtimeEntity>, IEnumerable<Showtime>>(entities);
+            var entities = _service.Get();
+            var models = _mapper.Map<IEnumerable<ShowtimeEntity>, IEnumerable<ShowtimeModel>>(entities);
 
-            //return Ok(models);
-            return Ok(Enumerable.Empty<Showtime>());
+            return Ok(models);
         }
 
         [HttpGet("date/{date}")]
-        public ActionResult<IEnumerable<Showtime>> GetByDate(DateTime date)
+        public ActionResult<IEnumerable<ShowtimeModel>> GetByDate(DateTime date)
         {
-            return Ok(Enumerable.Empty<Showtime>());
+            var entities = _service.GetByDate(date);
+            var models = _mapper.Map<IEnumerable<ShowtimeEntity>, IEnumerable<ShowtimeModel>>(entities);
+
+            return Ok(models);
         }
 
         [HttpGet("movie/{title}")]
-        public ActionResult<IEnumerable<Showtime>> GetByTitle(string title)
+        public ActionResult<IEnumerable<ShowtimeModel>> GetByTitle(string title)
         {
-            return Ok(Enumerable.Empty<Showtime>());
+            var entities = _service.GetByTitle(title);
+            var models = _mapper.Map<IEnumerable<ShowtimeEntity>, IEnumerable<ShowtimeModel>>(entities);
+
+            return Ok(models);
         }
 
         [HttpPost]
-        public ActionResult<Showtime> Create(Showtime showtime)
+        public ActionResult<ShowtimeModel> Create(ShowtimeModel model)
         {
-            //return CreatedAtAction(nameof(GetShowtime), new { id = showtime.Id }, showtime);
-            throw new NotImplementedException();
+            var entity = _mapper.Map<ShowtimeEntity>(model);
+            var createdEntity = _service.Create(entity);
+            var createdModel = _mapper.Map<ShowtimeModel>(entity);
+
+            return CreatedAtAction(nameof(Create), null, createdModel);
         }
 
         [HttpPut]
-        public IActionResult Update(Showtime showtime)
+        public IActionResult Update(ShowtimeModel model)
         {
+            var entity = _mapper.Map<ShowtimeEntity>(model);
+            _service.Update(entity);
+
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
+            _service.Delete(id);
+
             return NoContent();
         }
     }

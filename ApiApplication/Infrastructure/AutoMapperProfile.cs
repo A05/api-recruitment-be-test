@@ -8,7 +8,7 @@ namespace ApiApplication
     {
         public AutoMapperProfile()
         {
-            CreateMap<ShowtimeEntity, Showtime>();
+            CreateMap<ShowtimeEntity, ShowtimeModel>();
         }
     }
 }

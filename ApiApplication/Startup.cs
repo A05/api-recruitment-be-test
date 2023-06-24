@@ -1,5 +1,6 @@
 using ApiApplication.Auth;
 using ApiApplication.Database;
+using ApiApplication.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -22,13 +23,17 @@ namespace ApiApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IImdbService, ImdbService>();
+            services.AddTransient<ICinemaService, CinemaService>();
+            services.AddTransient<IShowtimesRepository, ShowtimesRepository>();
+
             services.AddDbContext<CinemaDbContext>(options =>
             {
                 options.UseInMemoryDatabase("CinemaDb")
                     .EnableSensitiveDataLogging()
-                    .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning));                
+                    .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             });
-            services.AddTransient<IShowtimesRepository, ShowtimesRepository>();
+
             services.AddSingleton<ICustomAuthenticationTokenService, CustomAuthenticationTokenService>();
             services.AddAuthentication(options =>
             {
