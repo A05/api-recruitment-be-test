@@ -18,6 +18,22 @@
             };
         }
 
+        public static ShowtimeEntity Clone(this ShowtimeEntity obj, MovieEntity movie)
+        {
+            if (obj == null)
+                return null;
+
+            return new ShowtimeEntity
+            {
+                Id = obj.Id,
+                StartDate = obj.StartDate,
+                EndDate = obj.EndDate,
+                Schedule = obj.Schedule,
+                AuditoriumId = obj.AuditoriumId,
+                Movie = movie
+            };
+        }
+
         public static MovieEntity Clone(this MovieEntity obj)
         {
             if (obj == null)

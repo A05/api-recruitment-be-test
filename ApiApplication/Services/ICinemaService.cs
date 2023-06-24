@@ -10,11 +10,11 @@ namespace ApiApplication.Services
         
         IEnumerable<ShowtimeEntity> GetByDate(DateTime date);
 
-        IEnumerable<ShowtimeEntity> GetByTitle(string title);
+        ShowtimeEntity GetByTitle(string title);
 
         ShowtimeEntity Create(ShowtimeEntity showtime);
 
-        void Update(ShowtimeEntity showtime);
+        ShowtimeEntity Update(ShowtimeEntity showtime);
 
         void Delete(int id);
     }

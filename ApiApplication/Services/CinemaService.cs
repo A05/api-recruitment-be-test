@@ -1,8 +1,8 @@
 ﻿using ApiApplication.Database;
 using System.Collections.Generic;
-using System.Linq;
 using System;
 using ApiApplication.Database.Entities;
+using System.Diagnostics;
 
 namespace ApiApplication.Services
 {
@@ -19,32 +19,97 @@ namespace ApiApplication.Services
 
         public IEnumerable<ShowtimeEntity> Get()
         {
-            throw new NotImplementedException();
+            var entities = _repository.GetCollection();
+
+            return entities;
         }
 
         public IEnumerable<ShowtimeEntity> GetByDate(DateTime date)
         {
-            throw new NotImplementedException();
+            var entities = _repository.GetCollection(i => i.StartDate <= date && date <= i.EndDate);
+
+            return entities;
         }
 
-        public IEnumerable<ShowtimeEntity> GetByTitle(string title)
+        public ShowtimeEntity GetByTitle(string title)
         {
-            throw new NotImplementedException();
+            var entity = _repository.GetByMovie(movie => movie.Title == title);
+
+            return entity;
         }
 
         public ShowtimeEntity Create(ShowtimeEntity showtime)
         {
-            throw new NotImplementedException();
+            if (showtime == null)
+                throw new ArgumentNullException(nameof(showtime));
+
+            if (string.IsNullOrWhiteSpace(showtime.Movie?.ImdbId))
+                throw new ArgumentException($"Movie must be specified.", nameof(showtime));
+
+            EnsureAuditoriumIdIsSupported(showtime.AuditoriumId);
+
+            var movie = GetMovieFromImdb(showtime.Movie.ImdbId);
+            Debug.Assert(movie != null);
+
+            var toBeAddedEntity = showtime.Clone(movie);
+
+            var addedEntity = _repository.Add(toBeAddedEntity);
+
+            return addedEntity;
         }
 
-        public void Update(ShowtimeEntity showtime)
+        public ShowtimeEntity Update(ShowtimeEntity showtime)
         {
-            throw new NotImplementedException();
+            if (showtime == null)
+                throw new ArgumentNullException(nameof(showtime));
+
+            if (showtime.Movie != null && string.IsNullOrWhiteSpace(showtime.Movie.ImdbId))
+                throw new ArgumentException($"Movie IMDB ID must be specified.", nameof(showtime));
+
+            EnsureAuditoriumIdIsSupported(showtime.AuditoriumId);
+
+            ShowtimeEntity toBeUpdatedEntity;
+
+            if (showtime.Movie == null)
+                toBeUpdatedEntity = showtime.Clone(null);
+            else
+            {
+                var movie = GetMovieFromImdb(showtime.Movie.ImdbId);
+                Debug.Assert(movie != null);
+
+                toBeUpdatedEntity = showtime.Clone(movie);
+            }
+
+            var updatedEntity = _repository.Update(toBeUpdatedEntity);
+
+            return updatedEntity;
         }
 
         public void Delete(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _repository.Delete(id);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new ApplicationException($"Failed to find the showtime with ID {id}.", ex);
+            }
+        }
+
+        private void EnsureAuditoriumIdIsSupported(int auditoriumId)
+        {
+            if (auditoriumId != 1 || auditoriumId != 2 || auditoriumId != 3)
+                throw new ArgumentException($"The {auditoriumId} is not supported yet.");
+        }
+
+        private MovieEntity GetMovieFromImdb(string imdbId)
+        {
+            var movie = _imdbService.Find(imdbId);
+            if (movie == null)
+                throw new ApplicationException($"Failed to find the movie with IMDB ID {imdbId}.");
+
+            return movie;
         }
     }
 }

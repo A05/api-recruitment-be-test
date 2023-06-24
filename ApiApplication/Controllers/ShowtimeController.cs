@@ -40,12 +40,12 @@ namespace ApiApplication.Controllers
         }
 
         [HttpGet("movie/{title}")]
-        public ActionResult<IEnumerable<ShowtimeModel>> GetByTitle(string title)
+        public ActionResult<ShowtimeModel> GetByTitle(string title)
         {
-            var entities = _service.GetByTitle(title);
-            var models = _mapper.Map<IEnumerable<ShowtimeEntity>, IEnumerable<ShowtimeModel>>(entities);
+            var entity = _service.GetByTitle(title);
+            var model = _mapper.Map<ShowtimeModel>(entity);
 
-            return Ok(models);
+            return Ok(model);
         }
 
         [HttpPost]
@@ -53,7 +53,7 @@ namespace ApiApplication.Controllers
         {
             var entity = _mapper.Map<ShowtimeEntity>(model);
             var createdEntity = _service.Create(entity);
-            var createdModel = _mapper.Map<ShowtimeModel>(entity);
+            var createdModel = _mapper.Map<ShowtimeModel>(createdEntity);
 
             return CreatedAtAction(nameof(Create), null, createdModel);
         }
@@ -62,7 +62,10 @@ namespace ApiApplication.Controllers
         public IActionResult Update(ShowtimeModel model)
         {
             var entity = _mapper.Map<ShowtimeEntity>(model);
-            _service.Update(entity);
+            var updatedEntity = _service.Update(entity);
+            var updatedModel = _mapper.Map<ShowtimeModel>(updatedEntity);
+
+            // TODO: Return updatedModel. Figure out the proper HTTP status code.
 
             return NoContent();
         }
