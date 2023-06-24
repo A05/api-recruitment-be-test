@@ -38,5 +38,3 @@ delete 4
 delete 5
 
 get
-
-patch -h Content-Type=application/json --no-body

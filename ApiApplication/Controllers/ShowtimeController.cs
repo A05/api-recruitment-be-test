@@ -96,7 +96,9 @@ namespace ApiApplication.Controllers
         [HttpPatch]
         public IActionResult Update()
         {
-            return Problem();
+            // patch -h Content-Type=application/json --no-body
+
+            throw new ApplicationException("I am a terrible error! Catch me outside of this class if you can.");
         }
 
         [HttpDelete("{id}")]

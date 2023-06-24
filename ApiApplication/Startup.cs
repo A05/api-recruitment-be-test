@@ -46,6 +46,8 @@ namespace ApiApplication
                     .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             });
 
+            services.AddExceptionHandlers();
+            
             services.AddSingleton<ICustomAuthenticationTokenService, CustomAuthenticationTokenService>();
             services.AddAuthentication(options =>
             {
@@ -72,7 +74,7 @@ namespace ApiApplication
         {
             app.UseOpenApi();
             app.UseSwaggerUi3();
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();                
@@ -83,6 +85,7 @@ namespace ApiApplication
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseExceptionHandler(app.CreateExceptionHandlerOptions());
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
