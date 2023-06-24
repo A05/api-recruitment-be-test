@@ -24,6 +24,9 @@ namespace ApiApplication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IImdbStatusHostedService>(sp => new ImdbStatusHostedService(sp));
+            services.AddHostedService(sp => (ImdbStatusHostedService) sp.GetService<IImdbStatusHostedService>());
+
             services.AddHttpClient();
 
             services.AddTransient<IImdbService, ImdbService>(sp =>
