@@ -99,7 +99,7 @@ namespace ApiApplication.Services
 
         private void EnsureAuditoriumIdIsSupported(int auditoriumId)
         {
-            if (auditoriumId != 1 || auditoriumId != 2 || auditoriumId != 3)
+            if (auditoriumId != 1 && auditoriumId != 2 && auditoriumId != 3)
                 throw new ArgumentException($"The {auditoriumId} is not supported yet.");
         }
 

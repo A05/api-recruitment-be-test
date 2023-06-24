@@ -1,0 +1,5 @@
+connect https://localhost:7629
+cd api/showtimes
+ls
+post -h Content-Type=application/json -c "{\"start_date\": \"2023-06-20\",\"end_date\": \"2023-06-30\",\"schedule\": \"a,b,c,d\",\"movie\": { \"imdb_id\": \"tt0411008\"},\"auditorium_id\": 1 }"
+
