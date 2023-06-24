@@ -34,6 +34,9 @@ namespace ApiApplication.Controllers
         public ActionResult<ShowtimeModel> GetById(int id)
         {
             var entity = _service.GetById(id);
+            if (entity == null)
+                return NotFound();
+
             var model = _mapper.Map<ShowtimeModel>(entity);
 
             return Ok(model);

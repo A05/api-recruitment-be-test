@@ -27,7 +27,7 @@ namespace ApiApplication.Services
 
         public ShowtimeEntity GetById(int id)
         {
-            var entity = _repository.GetCollection(i => i.Id == id).Single();
+            var entity = _repository.GetCollection(i => i.Id == id).SingleOrDefault();
 
             return entity;
         }
