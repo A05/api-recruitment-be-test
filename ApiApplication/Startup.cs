@@ -56,6 +56,12 @@ namespace ApiApplication
                 options.DefaultScheme = CustomAuthenticationSchemeOptions.AuthenticationScheme;
             });
 
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Read", policy => policy.RequireRole("Read", "Write"));
+                options.AddPolicy("Write", policy => policy.RequireRole("Write"));
+            });
+
             services.AddAutoMapper(typeof(Startup));
 
             services

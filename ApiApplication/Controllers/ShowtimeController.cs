@@ -5,9 +5,11 @@ using ApiApplication.Models;
 using AutoMapper;
 using ApiApplication.Services;
 using ApiApplication.Database.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ApiApplication.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/showtimes")]
     public class ShowtimeController : ControllerBase
@@ -22,6 +24,7 @@ namespace ApiApplication.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "Read")]
         public ActionResult<IEnumerable<ShowtimeModel>> Get()
         {
             var entities = _service.Get();
@@ -31,6 +34,7 @@ namespace ApiApplication.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "Read")]
         public ActionResult<ShowtimeModel> GetById(int id)
         {
             var entity = _service.GetById(id);
@@ -43,6 +47,7 @@ namespace ApiApplication.Controllers
         }
 
         [HttpGet("date/{date}")]
+        [Authorize(Policy = "Read")]
         public ActionResult<IEnumerable<ShowtimeModel>> GetByDate(DateTime date)
         {
             var entities = _service.GetByDate(date);
@@ -52,6 +57,7 @@ namespace ApiApplication.Controllers
         }
 
         [HttpGet("movie/{title}")]
+        [Authorize(Policy = "Read")]
         public ActionResult<ShowtimeModel> GetByTitle(string title)
         {
             var entity = _service.GetByTitle(title);
@@ -64,6 +70,7 @@ namespace ApiApplication.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Write")]
         public ActionResult<ShowtimeModel> Create(ShowtimeModel model)
         {
             var entity = _mapper.Map<ShowtimeEntity>(model);
@@ -81,6 +88,7 @@ namespace ApiApplication.Controllers
         }
 
         [HttpPut]
+        [Authorize(Policy = "Write")]
         public ActionResult<ShowtimeModel> Update(ShowtimeModel model)
         {
             var entity = _mapper.Map<ShowtimeEntity>(model);
@@ -94,6 +102,7 @@ namespace ApiApplication.Controllers
         }
 
         [HttpPatch]
+        [Authorize(Policy = "Write")]
         public IActionResult Update()
         {
             // patch -h Content-Type=application/json --no-body
@@ -102,6 +111,7 @@ namespace ApiApplication.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "Write")]
         public IActionResult Delete(int id)
         {
             if (!_service.TryDelete(id))
