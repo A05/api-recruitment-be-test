@@ -6,7 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ApiApplication.Services
+namespace ApiApplication.Domain
 {
     public class CinemaService : ICinemaService
     {

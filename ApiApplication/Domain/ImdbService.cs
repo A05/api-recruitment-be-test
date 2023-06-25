@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
-namespace ApiApplication.Services
+namespace ApiApplication.Domain
 {
     public class ImdbService : IImdbService
     {

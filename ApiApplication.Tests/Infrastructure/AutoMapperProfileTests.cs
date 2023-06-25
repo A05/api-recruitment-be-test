@@ -2,7 +2,7 @@
 using ApiApplication.Models;
 using AutoMapper;
 
-namespace ApiApplication.Tests
+namespace ApiApplication
 {
     [TestClass]
     public class AutoMapperProfileTests

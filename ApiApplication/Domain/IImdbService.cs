@@ -1,7 +1,7 @@
 ﻿using ApiApplication.Database.Entities;
 using System.Threading.Tasks;
 
-namespace ApiApplication.Services
+namespace ApiApplication.Domain
 {
     public interface IImdbService
     {

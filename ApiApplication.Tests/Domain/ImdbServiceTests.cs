@@ -1,7 +1,6 @@
-﻿using ApiApplication.Services;
-using Moq;
+﻿using Moq;
 
-namespace ApiApplication.Tests
+namespace ApiApplication.Domain
 {
     [TestClass]
     [TestCategory("Integration")]

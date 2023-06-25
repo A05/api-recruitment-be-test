@@ -1,6 +1,6 @@
 using ApiApplication.Auth;
 using ApiApplication.Database;
-using ApiApplication.Services;
+using ApiApplication.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;

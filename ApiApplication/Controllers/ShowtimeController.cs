@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using ApiApplication.Models;
 using AutoMapper;
-using ApiApplication.Services;
+using ApiApplication.Domain;
 using ApiApplication.Database.Entities;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;

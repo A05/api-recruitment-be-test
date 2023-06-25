@@ -1,10 +1,9 @@
-using ApiApplication.Database;
 using ApiApplication.Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Diagnostics;
 
-namespace ApiApplication.Tests
+namespace ApiApplication.Database
 {
     [TestClass]
     [TestCategory("Integration")]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Threading.Tasks;
 
-namespace ApiApplication.Services
+namespace ApiApplication.Domain
 {
     public interface ICinemaService
     {

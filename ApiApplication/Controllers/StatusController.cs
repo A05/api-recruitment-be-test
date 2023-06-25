@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using ApiApplication.Models;
-using ApiApplication.Services;
+using ApiApplication.Domain;
 
 namespace ApiApplication.Controllers
 {
