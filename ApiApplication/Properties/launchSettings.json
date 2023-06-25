@@ -20,6 +20,15 @@
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/showtime",
       "publishAllPorts": true,
       "useSSL": true
+    },
+    "SwaggerApp": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "https://localhost:7629/swagger",
+      "applicationUrl": "https://localhost:7629;http://localhost:7628",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

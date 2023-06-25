@@ -1,22 +1,17 @@
 ﻿using ApiApplication.Database.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ApiApplication.Database
 {
-    public class CinemaContext : DbContext
+    public class CinemaDbContext : DbContext
     {
-        public CinemaContext(DbContextOptions<CinemaContext> options) : base(options)
-        {
-            
-        }
-
         public DbSet<AuditoriumEntity> Auditoriums { get; set; }
         public DbSet<ShowtimeEntity> Showtimes { get; set; }
         public DbSet<MovieEntity> Movies { get; set; }
+
+        public CinemaDbContext(DbContextOptions<CinemaDbContext> options) : base(options) {}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

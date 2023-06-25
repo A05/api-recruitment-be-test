@@ -1,0 +1,45 @@
+connect http://localhost:7628
+cd api/showtimes
+
+delete 1 -h ApiKey=Nzg5NHxXcml0ZQ==
+
+post -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"start_date\": \"2023-06-10\",\"end_date\": \"2023-06-20\",\"schedule\": \"a,b,c,d\",\"movie\": { \"imdb_id\": \"tt0111161\"},\"auditorium_id\": 1 }"
+post -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"start_date\": \"2023-06-11\",\"end_date\": \"2023-06-21\",\"schedule\": \"a,b,c,d\",\"movie\": { \"imdb_id\": \"tt0068646\"},\"auditorium_id\": 2 }"
+post -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"start_date\": \"2023-06-12\",\"end_date\": \"2023-06-22\",\"schedule\": \"a,b,c,d\",\"movie\": { \"imdb_id\": \"tt0468569\"},\"auditorium_id\": 3 }"
+post -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"start_date\": \"2023-06-13\",\"end_date\": \"2023-06-23\",\"schedule\": \"a,b,c,d\",\"movie\": { \"imdb_id\": \"tt0050083\"},\"auditorium_id\": 3 }"
+post -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"start_date\": \"2023-06-14\",\"end_date\": \"2023-06-24\",\"schedule\": \"a,b,c,d\",\"movie\": { \"imdb_id\": \"tt0108052\"},\"auditorium_id\": 2 }"
+
+get -h ApiKey=MTIzNHxSZWFk
+get -h ApiKey=Nzg5NHxXcml0ZQ==
+
+cd date
+get -h ApiKey=MTIzNHxSZWFk 2023-06-10
+get -h ApiKey=MTIzNHxSZWFk 2023-06-14
+get -h ApiKey=MTIzNHxSZWFk 2023-06-23
+get -h ApiKey=MTIzNHxSZWFk 2023-06-24
+
+cd ../movie
+get -h ApiKey=MTIzNHxSZWFk "Schindler's List"
+get -h ApiKey=MTIzNHxSZWFk "12 Angry Men"
+get -h ApiKey=MTIzNHxSZWFk "The Dark Knight"
+get -h ApiKey=MTIzNHxSZWFk "The Godfather"
+get -h ApiKey=MTIzNHxSZWFk "The Shawshank Redemption"
+
+cd ..
+put -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"id\": \"1\",\"start_date\": \"2023-06-01\",\"end_date\": \"2023-06-11\",\"schedule\": \"a1,b,c,d\",\"movie\": { \"imdb_id\": \"tt0111161\"},\"auditorium_id\": 2 }"
+put -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"id\": \"2\",\"start_date\": \"2023-06-02\",\"end_date\": \"2023-06-12\",\"schedule\": \"a2,b,c,d\",\"movie\": { \"imdb_id\": \"tt0068646\"},\"auditorium_id\": 3 }"
+put -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"id\": \"3\",\"start_date\": \"2023-06-03\",\"end_date\": \"2023-06-13\",\"schedule\": \"a3,b,c,d\",\"movie\": { \"imdb_id\": \"tt0468569\"},\"auditorium_id\": 1 }"
+put -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"id\": \"4\",\"start_date\": \"2023-06-04\",\"end_date\": \"2023-06-14\",\"schedule\": \"a4,b,c,d\",\"movie\": { \"imdb_id\": \"tt0050083\"},\"auditorium_id\": 1 }"
+put -h Content-Type=application/json -h ApiKey=Nzg5NHxXcml0ZQ== -c "{\"id\": \"5\",\"start_date\": \"2023-06-05\",\"end_date\": \"2023-06-15\",\"schedule\": \"a5,b,c,d\",\"movie\": { \"imdb_id\": \"tt0108052\"},\"auditorium_id\": 3 }"
+
+delete 1 -h ApiKey=Nzg5NHxXcml0ZQ==
+delete 2 -h ApiKey=Nzg5NHxXcml0ZQ==
+delete 3 -h ApiKey=Nzg5NHxXcml0ZQ==
+delete 4 -h ApiKey=Nzg5NHxXcml0ZQ==
+delete 5 -h ApiKey=Nzg5NHxXcml0ZQ==
+
+get -h ApiKey=MTIzNHxSZWFk
+get -h ApiKey=Nzg5NHxXcml0ZQ==
+
+cd ../status
+get
