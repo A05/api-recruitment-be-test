@@ -4,6 +4,7 @@ using System;
 using ApiApplication.Database.Entities;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ApiApplication.Services
 {
@@ -18,35 +19,35 @@ namespace ApiApplication.Services
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public IEnumerable<ShowtimeEntity> Get()
+        public async Task<IEnumerable<ShowtimeEntity>> GetAsync()
         {
-            var entities = _repository.GetCollection();
+            var entities = await _repository.GetCollectionAsync();
 
             return entities;
         }
 
-        public ShowtimeEntity GetById(int id)
+        public async Task<ShowtimeEntity> GetByIdAsync(int id)
         {
-            var entity = _repository.GetCollection(i => i.Id == id).SingleOrDefault();
+            var entities = await _repository.GetCollectionAsync(i => i.Id == id);
 
-            return entity;
+            return entities.SingleOrDefault();
         }
 
-        public IEnumerable<ShowtimeEntity> GetByDate(DateTime date)
+        public async Task<IEnumerable<ShowtimeEntity>> GetByDateAsync(DateTime date)
         {
-            var entities = _repository.GetCollection(i => i.StartDate <= date && date <= i.EndDate);
+            var entities = await _repository.GetCollectionAsync(i => i.StartDate <= date && date <= i.EndDate);
 
             return entities;
         }
 
-        public ShowtimeEntity GetByTitle(string title)
+        public async Task<ShowtimeEntity> GetByTitleAsync(string title)
         {
-            var entity = _repository.GetByMovie(movie => movie.Title == title);
+            var entity = await _repository.GetByMovieAsync(movie => movie.Title == title);
 
             return entity;
         }
 
-        public bool TryCreate(ShowtimeEntity showtime, out ShowtimeEntity createdEntity)
+        public async Task<(bool, ShowtimeEntity createdEntity)> TryCreateAsync(ShowtimeEntity showtime)
         {
             if (showtime == null)
                 throw new ArgumentNullException(nameof(showtime));
@@ -56,24 +57,21 @@ namespace ApiApplication.Services
 
             EnsureAuditoriumIdIsSupported(showtime.AuditoriumId);
 
-            var existingShowtime = _repository.GetByMovie(i => i.ImdbId == showtime.Movie.ImdbId);
+            var existingShowtime = await _repository.GetByMovieAsync(i => i.ImdbId == showtime.Movie.ImdbId);
             if (existingShowtime != null)
-            {
-                createdEntity = existingShowtime;
-                return false;
-            }
+                return (false, createdEntity: existingShowtime);
 
-            var movie = GetMovieFromImdb(showtime.Movie.ImdbId);
+            var movie = await GetMovieFromImdbAsync(showtime.Movie.ImdbId);
             Debug.Assert(movie != null);
 
             var toBeAddedEntity = showtime.Clone(movie);
 
-            createdEntity = _repository.Add(toBeAddedEntity);
+            var createdEntity = await _repository.AddAsync(toBeAddedEntity);
 
-            return true;
+            return (true, createdEntity);
         }
 
-        public bool TryUpdate(ShowtimeEntity showtime, out ShowtimeEntity updatedEntity)
+        public async Task<(bool, ShowtimeEntity updatedEntity)> TryUpdateAsync(ShowtimeEntity showtime)
         {
             if (showtime == null)
                 throw new ArgumentNullException(nameof(showtime));
@@ -83,12 +81,9 @@ namespace ApiApplication.Services
 
             EnsureAuditoriumIdIsSupported(showtime.AuditoriumId);
 
-            var existingShowtime = _repository.GetCollection(i => i.Id == showtime.Id).SingleOrDefault();
+            var existingShowtime = await GetByIdAsync(showtime.Id);
             if (existingShowtime == null)
-            {
-                updatedEntity = null;
-                return false;
-            }
+                return (false, updatedEntity: null);
 
             ShowtimeEntity toBeUpdatedEntity;
 
@@ -96,22 +91,22 @@ namespace ApiApplication.Services
                 toBeUpdatedEntity = showtime.Clone(null);
             else
             {
-                var movie = GetMovieFromImdb(showtime.Movie.ImdbId);
+                var movie = await GetMovieFromImdbAsync(showtime.Movie.ImdbId);
                 Debug.Assert(movie != null);
 
                 toBeUpdatedEntity = showtime.Clone(movie);
             }
 
-            updatedEntity = _repository.Update(toBeUpdatedEntity);
+            var updatedEntity = await _repository.UpdateAsync(toBeUpdatedEntity);
 
-            return true;
+            return (true, updatedEntity);
         }
 
-        public bool TryDelete(int id)
+        public async Task<bool> TryDeleteAsync(int id)
         {
             try
             {
-                _repository.Delete(id);
+                await _repository.DeleteAsync(id);
 
                 return true;
             }
@@ -127,9 +122,10 @@ namespace ApiApplication.Services
                 throw new ArgumentException($"The {auditoriumId} is not supported yet.");
         }
 
-        private MovieEntity GetMovieFromImdb(string imdbId)
+        private async Task<MovieEntity> GetMovieFromImdbAsync(string imdbId)
         {
-            var movie = _imdbService.Find(imdbId, out var description);
+            var (movie, description) = await _imdbService.FindAsync(imdbId);
+
             if (movie == null)
                 throw new ApplicationException(description);
 

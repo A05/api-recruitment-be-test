@@ -6,6 +6,7 @@ using AutoMapper;
 using ApiApplication.Services;
 using ApiApplication.Database.Entities;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 
 namespace ApiApplication.Controllers
 {
@@ -25,9 +26,9 @@ namespace ApiApplication.Controllers
 
         [HttpGet]
         [Authorize(Policy = "Read")]
-        public ActionResult<IEnumerable<ShowtimeModel>> Get()
+        public async Task<ActionResult<IEnumerable<ShowtimeModel>>> Get()
         {
-            var entities = _service.Get();
+            var entities = await _service.GetAsync();
             var models = _mapper.Map<IEnumerable<ShowtimeEntity>, IEnumerable<ShowtimeModel>>(entities);
 
             return Ok(models);
@@ -35,9 +36,9 @@ namespace ApiApplication.Controllers
 
         [HttpGet("{id}")]
         [Authorize(Policy = "Read")]
-        public ActionResult<ShowtimeModel> GetById(int id)
+        public async Task<ActionResult<ShowtimeModel>> GetById(int id)
         {
-            var entity = _service.GetById(id);
+            var entity = await _service.GetByIdAsync(id);
             if (entity == null)
                 return NotFound();
 
@@ -48,9 +49,9 @@ namespace ApiApplication.Controllers
 
         [HttpGet("date/{date}")]
         [Authorize(Policy = "Read")]
-        public ActionResult<IEnumerable<ShowtimeModel>> GetByDate(DateTime date)
+        public async Task<ActionResult<IEnumerable<ShowtimeModel>>> GetByDate(DateTime date)
         {
-            var entities = _service.GetByDate(date);
+            var entities = await _service.GetByDateAsync(date);
             var models = _mapper.Map<IEnumerable<ShowtimeEntity>, IEnumerable<ShowtimeModel>>(entities);
 
             return Ok(models);
@@ -58,9 +59,9 @@ namespace ApiApplication.Controllers
 
         [HttpGet("movie/{title}")]
         [Authorize(Policy = "Read")]
-        public ActionResult<ShowtimeModel> GetByTitle(string title)
+        public async Task<ActionResult<ShowtimeModel>> GetByTitle(string title)
         {
-            var entity = _service.GetByTitle(title);
+            var entity = await _service.GetByTitleAsync(title);
             if (entity == null)
                 return NotFound();
 
@@ -71,11 +72,13 @@ namespace ApiApplication.Controllers
 
         [HttpPost]
         [Authorize(Policy = "Write")]
-        public ActionResult<ShowtimeModel> Create(ShowtimeModel model)
+        public async Task<ActionResult<ShowtimeModel>> Create(ShowtimeModel model)
         {
             var entity = _mapper.Map<ShowtimeEntity>(model);
 
-            if (!_service.TryCreate(entity, out var createdEntity))
+            var (success, createdEntity) = await _service.TryCreateAsync(entity);
+
+            if (!success)
             {
                 Response.Headers.Location = Url.Action(nameof(GetById), new { id = createdEntity.Id });
                 
@@ -89,11 +92,13 @@ namespace ApiApplication.Controllers
 
         [HttpPut]
         [Authorize(Policy = "Write")]
-        public ActionResult<ShowtimeModel> Update(ShowtimeModel model)
+        public async Task<ActionResult<ShowtimeModel>> Update(ShowtimeModel model)
         {
             var entity = _mapper.Map<ShowtimeEntity>(model);
 
-            if (!_service.TryUpdate(entity, out var updatedEntity))
+            var (success, updatedEntity) =await _service.TryUpdateAsync(entity);
+
+            if (!success)
                 return NotFound();
             
             var updatedModel = _mapper.Map<ShowtimeModel>(updatedEntity);
@@ -112,9 +117,9 @@ namespace ApiApplication.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "Write")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (!_service.TryDelete(id))
+            if (!await _service.TryDeleteAsync(id))
                 return NotFound();
 
             return NoContent();

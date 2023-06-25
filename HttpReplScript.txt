@@ -40,3 +40,6 @@ delete 5 -h ApiKey=Nzg5NHxXcml0ZQ==
 
 get -h ApiKey=MTIzNHxSZWFk
 get -h ApiKey=Nzg5NHxXcml0ZQ==
+
+cd ../status
+get

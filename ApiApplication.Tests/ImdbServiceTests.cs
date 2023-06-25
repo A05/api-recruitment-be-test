@@ -8,14 +8,14 @@ namespace ApiApplication.Tests
     public class ImdbServiceTests
     {
         [TestMethod]
-        public void ShouldFind()
+        public async Task ShouldFind()
         {
             var httpClientFactory = Mock.Of<IHttpClientFactory>(o =>
                 o.CreateClient(It.IsAny<string>()) == new HttpClient());
 
             var sut = new ImdbService("k_5v2j0109", httpClientFactory);
 
-            var movie = sut.Find("tt0411008", out var description);
+            var (movie, description) = await sut.FindAsync("tt0411008");
 
             Assert.IsNotNull(movie);
             Assert.IsTrue(string.IsNullOrEmpty(description));
@@ -26,14 +26,14 @@ namespace ApiApplication.Tests
         }
 
         [TestMethod]
-        public void ShouldReturnNullOnFindWhenMovieDoesNotExist()
+        public async Task ShouldReturnNullOnFindWhenMovieDoesNotExist()
         {
             var httpClientFactory = Mock.Of<IHttpClientFactory>(o =>
                 o.CreateClient(It.IsAny<string>()) == new HttpClient());
 
             var sut = new ImdbService("k_5v2j0109", httpClientFactory);
 
-            var movie = sut.Find("doesnotexist", out var description);
+            var (movie, description) = await sut.FindAsync("doesnotexist");
 
             Assert.IsNull(movie);
             Assert.IsFalse(string.IsNullOrEmpty(description));
@@ -61,14 +61,14 @@ namespace ApiApplication.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void ShouldThrowArgumentExceptionOnFindWhenImdbIdIsNull()
+        public async Task ShouldThrowArgumentExceptionOnFindWhenImdbIdIsNull()
         {
             var httpClientFactory = Mock.Of<IHttpClientFactory>(o =>
                 o.CreateClient(It.IsAny<string>()) == new HttpClient());
 
             var sut = new ImdbService("k_5v2j0109", httpClientFactory);
 
-            sut.Find(null, out var _);
+            await sut.FindAsync(null);
         }
     }
 }

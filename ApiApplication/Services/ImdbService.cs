@@ -3,6 +3,7 @@ using System;
 using System.Globalization;
 using System.Net.Http;
 using System.Text.Json.Nodes;
+using System.Threading.Tasks;
 
 namespace ApiApplication.Services
 {
@@ -21,7 +22,7 @@ namespace ApiApplication.Services
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
         }
 
-        public MovieEntity Find(string imdbId, out string description)
+        public async Task<(MovieEntity, string description)> FindAsync(string imdbId)
         {
             if (string.IsNullOrWhiteSpace(imdbId))
                 throw new ArgumentException("IMDB ID must be specified.");
@@ -30,11 +31,12 @@ namespace ApiApplication.Services
             
             httpClient.BaseAddress = new Uri($"https://imdb-api.com/en/API/Title/{_apiKey}/");
 
-            var jsonString = httpClient.GetStringAsync(imdbId).Result;
+            var jsonString = await httpClient.GetStringAsync(imdbId);
 
             var movieNode = JsonNode.Parse(jsonString);
 
             MovieEntity entity;
+            string description;
 
             if (IsThereAnyError(movieNode, out var errorMessage))
             {
@@ -53,7 +55,7 @@ namespace ApiApplication.Services
                 };
             }
 
-            return entity;
+            return (entity, description);
         }
 
         private bool IsThereAnyError(JsonNode movieNode, out string errorMessage)

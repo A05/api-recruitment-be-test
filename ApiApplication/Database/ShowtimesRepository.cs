@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ApiApplication.Database
 {
@@ -17,7 +18,7 @@ namespace ApiApplication.Database
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public ShowtimeEntity Add(ShowtimeEntity entity)
+        public async Task<ShowtimeEntity> AddAsync(ShowtimeEntity entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -29,52 +30,52 @@ namespace ApiApplication.Database
 
             _context.Showtimes.Add(clone);
             _context.Movies.Add(clone.Movie);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return clone;
         }
 
-        public ShowtimeEntity Delete(int id)
+        public async Task<ShowtimeEntity> DeleteAsync(int id)
         {
             var entity = _context.Showtimes.Include(i => i.Movie).Where(i => i.Id == id).Single();
 
             _context.Showtimes.Remove(entity);
             _context.Movies.Remove(entity.Movie);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return entity;
         }
 
-        public ShowtimeEntity GetByMovie(Expression<Func<MovieEntity, bool>> filter)
+        public async Task<ShowtimeEntity> GetByMovieAsync(Expression<Func<MovieEntity, bool>> filter)
         {
             if (filter == null)
                 throw new ArgumentNullException(nameof(filter));
 
             // TODO: Do it with one round trip.
 
-            var movie = _context.Movies.Where(filter).FirstOrDefault();
+            var movie = await _context.Movies.Where(filter).FirstOrDefaultAsync();
             if (movie == null)
                 return null;
 
-            return _context.Showtimes.FirstOrDefault(i => i.Id == movie.ShowtimeId);
+            return await _context.Showtimes.FirstOrDefaultAsync(i => i.Id == movie.ShowtimeId);
         }
 
-        public IEnumerable<ShowtimeEntity> GetCollection()
+        public async Task<IEnumerable<ShowtimeEntity>> GetCollectionAsync()
         {
-            return GetCollection(null);
+            return await GetCollectionAsync(null);
         }
 
-        public IEnumerable<ShowtimeEntity> GetCollection(Expression<Func<ShowtimeEntity, bool>> filter)
+        public async Task<IEnumerable<ShowtimeEntity>> GetCollectionAsync(Expression<Func<ShowtimeEntity, bool>> filter)
         {
             IQueryable<ShowtimeEntity> query = _context.Showtimes.Include(i => i.Movie);
 
             if (filter != null)
                 query = query.Where(filter);
 
-            return query.ToArray();
+            return await query.ToArrayAsync();
         }
 
-        public ShowtimeEntity Update(ShowtimeEntity entity)
+        public async Task<ShowtimeEntity> UpdateAsync(ShowtimeEntity entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -86,7 +87,7 @@ namespace ApiApplication.Database
             if (entity.Movie != null)            
                 query = query.Include(i => i.Movie);
             
-            var entityToUpdate = query.FirstOrDefault();
+            var entityToUpdate = await query.FirstOrDefaultAsync();
             if (entityToUpdate == null)
                 throw new ArgumentException($"Failed to find a showtime with ID = {entity.Id}.", nameof(entity));
 
@@ -105,7 +106,7 @@ namespace ApiApplication.Database
                 entityToUpdate.Movie.ReleaseDate = entity.Movie.ReleaseDate;
             }
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return entityToUpdate;
         }

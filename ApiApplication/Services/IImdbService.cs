@@ -1,9 +1,10 @@
 ﻿using ApiApplication.Database.Entities;
+using System.Threading.Tasks;
 
 namespace ApiApplication.Services
 {
     public interface IImdbService
     {
-        MovieEntity Find(string imdbId, out string description);
+        Task<(MovieEntity, string description)> FindAsync(string imdbId);
     }
 }

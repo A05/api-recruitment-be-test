@@ -1,23 +1,24 @@
 ﻿using ApiApplication.Database.Entities;
 using System.Collections.Generic;
 using System;
+using System.Threading.Tasks;
 
 namespace ApiApplication.Services
 {
     public interface ICinemaService
     {
-        IEnumerable<ShowtimeEntity> Get();
+        Task<IEnumerable<ShowtimeEntity>> GetAsync();
 
-        ShowtimeEntity GetById(int id);
+        Task<ShowtimeEntity> GetByIdAsync(int id);
 
-        IEnumerable<ShowtimeEntity> GetByDate(DateTime date);
+        Task<IEnumerable<ShowtimeEntity>> GetByDateAsync(DateTime date);
 
-        ShowtimeEntity GetByTitle(string title);
+        Task<ShowtimeEntity> GetByTitleAsync(string title);
 
-        bool TryCreate(ShowtimeEntity showtime, out ShowtimeEntity createdEntity);
+        Task<(bool, ShowtimeEntity createdEntity)> TryCreateAsync(ShowtimeEntity showtime);
 
-        bool TryUpdate(ShowtimeEntity showtime, out ShowtimeEntity updatedEntity);
+        Task<(bool, ShowtimeEntity updatedEntity)> TryUpdateAsync(ShowtimeEntity showtime);
 
-        bool TryDelete(int id);
+        Task<bool> TryDeleteAsync(int id);
     }
 }

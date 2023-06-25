@@ -37,14 +37,14 @@ namespace ApiApplication.Tests
         }
 
         [TestMethod]
-        public void ShouldAdd()
+        public async Task ShouldAdd()
         {
             Debug.Assert(_context != null);
 
             var toAdd = CreateShowtimeEntity();
 
             var sut = new ShowtimesRepository(_context);
-            var added = sut.Add(toAdd);
+            var added = await sut.AddAsync(toAdd);
 
             Assert.AreNotSame(toAdd, added);
             Assert.AreNotSame(toAdd.Movie, added.Movie);
@@ -58,22 +58,22 @@ namespace ApiApplication.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ShouldThrowArgumentNullExceptionOnAddWhenShowtimeIsNull()
+        public async Task ShouldThrowArgumentNullExceptionOnAddWhenShowtimeIsNull()
         {
             var sut = new ShowtimesRepository(_context);
-            sut.Add(null);
+            await sut.AddAsync(null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void ShouldThrowArgumentExceptionOnAddWhenMovieIsNull()
+        public async Task ShouldThrowArgumentExceptionOnAddWhenMovieIsNull()
         {
             var sut = new ShowtimesRepository(_context);
-            sut.Add(new ShowtimeEntity { Movie = null });
+            await sut.AddAsync(new ShowtimeEntity { Movie = null });
         }
 
         [TestMethod]
-        public void ShouldDelete()
+        public async Task ShouldDelete()
         {
             Debug.Assert(_context != null);
 
@@ -84,7 +84,7 @@ namespace ApiApplication.Tests
             _context.SaveChanges();
 
             var sut = new ShowtimesRepository(_context);
-            var deleted = sut.Delete(obj1.Id);
+            var deleted = await sut.DeleteAsync(obj1.Id);
 
             Assert.AreEqual(obj1.Id, deleted.Id);
             Assert.AreEqual(1, _context.Showtimes.Count());
@@ -97,7 +97,7 @@ namespace ApiApplication.Tests
         }
 
         [TestMethod]
-        public void ShouldGetByMovie()
+        public async Task ShouldGetByMovie()
         {
             Debug.Assert(_context != null);
 
@@ -108,33 +108,33 @@ namespace ApiApplication.Tests
             _context.SaveChanges();
 
             var sut = new ShowtimesRepository(_context);
-            var found = sut.GetByMovie(movie => movie.Title == obj1.Movie.Title);
+            var found = await sut.GetByMovieAsync(movie => movie.Title == obj1.Movie.Title);
             
             Assert.IsNotNull(found?.Movie);
             Assert.AreEqual(obj1.Id, found.Id);
             Assert.AreEqual(obj1.Movie.Title, found.Movie.Title);
 
-            found = sut.GetByMovie(movie => movie.Title.Contains((_next - 1).ToString()));
+            found = await sut.GetByMovieAsync(movie => movie.Title.Contains((_next - 1).ToString()));
 
             Assert.IsNotNull(found?.Movie);
             Assert.AreEqual(obj2.Id, found.Id);
             Assert.AreEqual(obj2.Movie.Title, found.Movie.Title);
 
-            found = sut.GetByMovie(movie => movie.Title.Contains(_next.ToString()));
+            found = await sut.GetByMovieAsync(movie => movie.Title.Contains(_next.ToString()));
 
             Assert.IsNull(found);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ShouldThrowArgumentNullExceptionOnGetByMovieWhenFilterIsNull()
+        public async Task ShouldThrowArgumentNullExceptionOnGetByMovieWhenFilterIsNull()
         {
             var sut = new ShowtimesRepository(_context);
-            sut.GetByMovie(null);
+            await sut.GetByMovieAsync(null);
         }
 
         [TestMethod]
-        public void ShouldGetCollection()
+        public async Task ShouldGetCollection()
         {
             Debug.Assert(_context != null);
 
@@ -151,31 +151,31 @@ namespace ApiApplication.Tests
             _context.SaveChanges();
 
             var sut = new ShowtimesRepository(_context);
-            var founds = sut.GetCollection(i => i.StartDate <= now && now <= i.EndDate);
+            var founds = await sut.GetCollectionAsync(i => i.StartDate <= now && now <= i.EndDate);
 
             Assert.AreEqual(3, founds.Count());
 
-            founds = sut.GetCollection(i => i.StartDate <= now.AddDays(-3) && now.AddDays(-3) <= i.EndDate);
+            founds = await sut.GetCollectionAsync(i => i.StartDate <= now.AddDays(-3) && now.AddDays(-3) <= i.EndDate);
 
             Assert.AreEqual(1, founds.Count());
             Assert.AreEqual(obj1.Id, founds.First().Id);
 
-            founds = sut.GetCollection(i => i.StartDate <= now.AddDays(3) && now.AddDays(3) <= i.EndDate);
+            founds = await sut.GetCollectionAsync(i => i.StartDate <= now.AddDays(3) && now.AddDays(3) <= i.EndDate);
 
             Assert.AreEqual(1, founds.Count());
             Assert.AreEqual(obj2.Id, founds.First().Id);
 
-            founds = sut.GetCollection(null);
+            founds = await sut.GetCollectionAsync(null);
 
             Assert.AreEqual(3, founds.Count());
 
-            founds = sut.GetCollection();
+            founds = await sut.GetCollectionAsync();
 
             Assert.AreEqual(3, founds.Count());
         }
 
         [TestMethod]
-        public void ShouldUpdate()
+        public async Task ShouldUpdate()
         {
             Debug.Assert(_context != null);
 
@@ -200,7 +200,7 @@ namespace ApiApplication.Tests
             };
 
             var sut = new ShowtimesRepository(_context);
-            var updated = sut.Update(obj2);
+            var updated = await sut.UpdateAsync(obj2);
 
             Assert.IsNotNull(updated);
             Assert.AreNotSame(updated, obj2);
@@ -212,7 +212,7 @@ namespace ApiApplication.Tests
         }
 
         [TestMethod]
-        public void ShouldUpdateWhenMovieIsNull()
+        public async Task ShouldUpdateWhenMovieIsNull()
         {
             Debug.Assert(_context != null);
 
@@ -231,7 +231,7 @@ namespace ApiApplication.Tests
             };
 
             var sut = new ShowtimesRepository(_context);
-            var updated = sut.Update(obj2);
+            var updated = await sut.UpdateAsync(obj2);
 
             Assert.IsNotNull(updated);
             Assert.AreNotSame(updated, obj2);
@@ -243,18 +243,18 @@ namespace ApiApplication.Tests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void ShouldThrowArgumentExceptionOnUpdateWhenEntityDoesNotExist()
+        public async Task ShouldThrowArgumentExceptionOnUpdateWhenEntityDoesNotExist()
         {
             var sut = new ShowtimesRepository(_context);
-            sut.Update(new ShowtimeEntity { Id = 2548 });
+            await sut.UpdateAsync(new ShowtimeEntity { Id = 2548 });
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ShouldThrowArgumentNullExceptionOnUpdateWhenEntityIsNull()
+        public async Task ShouldThrowArgumentNullExceptionOnUpdateWhenEntityIsNull()
         {
             var sut = new ShowtimesRepository(_context);
-            sut.Update(null);
+            await sut.UpdateAsync(null);
         }
 
         private ShowtimeEntity CreateShowtimeEntity()

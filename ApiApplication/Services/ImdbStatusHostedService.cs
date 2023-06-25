@@ -2,14 +2,14 @@
 using System.Threading;
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace ApiApplication.Services
 {
-    public class ImdbStatusHostedService : IImdbStatusHostedService
+    public class ImdbStatusHostedService : BackgroundService, IImdbStatusHostedService
     {
         private readonly IServiceProvider _services;
-        private Timer _timer;
-
+        
         public bool Up { get; private set; }
         public DateTime LastCall { get; private set; } = DateTime.Now;
 
@@ -18,46 +18,33 @@ namespace ApiApplication.Services
             _services = services ?? throw new ArgumentNullException(nameof(services));
         }
 
-        public Task StartAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(60));
+            using var _timer = new PeriodicTimer(TimeSpan.FromSeconds(60));
 
-            return Task.CompletedTask;
-        }
-
-        private void DoWork(object state)
-        {
-            try
+            do
             {
-                using (var scope = _services.CreateScope())
+                try
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<IImdbService>();
-                    
-                    service.Find("tt0411008", out var _);
+                    using (var scope = _services.CreateScope())
+                    {
+                        var service = scope.ServiceProvider.GetRequiredService<IImdbService>();
 
-                    Up = true;
+                        var (_, _) = await service.FindAsync("tt0411008");
+
+                        Up = true;
+                    }
                 }
-            }
-            catch
-            {
-                Up = false;
-            }
-            finally
-            {
-                LastCall = DateTime.Now;
-            }
-        }
-
-        public Task StopAsync(CancellationToken stoppingToken)
-        {
-            _timer?.Change(Timeout.Infinite, 0);
-
-            return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _timer?.Dispose();
+                catch
+                {
+                    Up = false;
+                }
+                finally
+                {
+                    LastCall = DateTime.Now;
+                }
+            } 
+            while (await _timer.WaitForNextTickAsync(stoppingToken));
         }
     }
 }
