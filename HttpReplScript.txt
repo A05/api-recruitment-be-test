@@ -1,4 +1,4 @@
-connect https://localhost:7629
+connect http://localhost:7628
 cd api/showtimes
 
 delete 1 -h ApiKey=Nzg5NHxXcml0ZQ==
