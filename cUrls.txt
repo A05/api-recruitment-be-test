@@ -1,2 +1,11 @@
 Please add the cURLs of your tests here:
 
+1. I have been using the httprepl tool for testing: 
+https://learn.microsoft.com/en-us/aspnet/core/web-api/http-repl/?view=aspnetcore-6.0&tabs=window
+
+2. Please use the HttpReplScript.txt file for testing 
+my implementation with that httprepl tool.
+
+3. If you want me to add cUrls to this file, please let me know and I will do it.
+
+Thank you!
