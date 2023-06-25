@@ -4,6 +4,7 @@ using Moq;
 namespace ApiApplication.Tests
 {
     [TestClass]
+    [TestCategory("Integration")]
     public class ImdbServiceTests
     {
         [TestMethod]

@@ -7,6 +7,7 @@ using System.Diagnostics;
 namespace ApiApplication.Tests
 {
     [TestClass]
+    [TestCategory("Integration")]
     public class ShowtimesRepositoryTests
     {
         private int _next;
